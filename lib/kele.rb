@@ -27,4 +27,20 @@ class Kele
     JSON.parse(response.body)
   end
 
+  def get_messages(page_number = 1)
+    response = self.class.get("#{@base_uri}/message_threads", body: {"page": page_number}, headers: { "authorization" => @auth_token })
+    JSON.parse(response.body)
+  end
+
+  #create a new message thread: ex. 'subject: "New Message Subject"'
+  #create a new message in an existing message thread: ex. 'token: "abcs"'
+  def create_message(sender, recipient_id, stripped_text, args)
+    if args[:token].nil?
+      puts "HELLO!"
+      response = self.class.post("#{@base_uri}/messages", body: { "sender": sender, "recipient_id": recipient_id, "subject": args[:subject], "stripped-text": stripped_text }, headers: { "authorization" => @auth_token })
+    else
+      response = self.class.post("#{@base_uri}/messages", body: { "sender": sender, "recipient_id": recipient_id, "token": args[:token], "stripped-text": stripped_text }, headers: { "authorization" => @auth_token })
+    end
+  end
+
 end
