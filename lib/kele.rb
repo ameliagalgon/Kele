@@ -36,16 +36,15 @@ class Kele
   #create a new message in an existing message thread: ex. 'token: "abcs"'
   def create_message(sender, recipient_id, stripped_text, args)
     if args[:token].nil?
-      puts "HELLO!"
       response = self.class.post("#{@base_uri}/messages", body: { "sender": sender, "recipient_id": recipient_id, "subject": args[:subject], "stripped-text": stripped_text }, headers: { "authorization" => @auth_token })
     else
       response = self.class.post("#{@base_uri}/messages", body: { "sender": sender, "recipient_id": recipient_id, "token": args[:token], "stripped-text": stripped_text }, headers: { "authorization" => @auth_token })
     end
   end
 
-  def create_submission(checkpoint_id, assignment_branch, assignment_commit_link, comment = "")
+  def create_submission(checkpoint_id, assignment_branch = "", assignment_commit_link = "", comment = "")
     response = get_me
-    enrollment_id = response['id']
+    enrollment_id = response['current_enrollment']['id']
     response = self.class.post("#{@base_uri}/checkpoint_submissions", body: { "assignment_branch": assignment_branch, "assignment_commit_link": assignment_commit_link, "checkpoint_id": checkpoint_id, "comment": comment, "enrollment_id": enrollment_id }, headers: { "authorization" => @auth_token })
   end
 
